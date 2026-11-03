@@ -1,6 +1,8 @@
 """Flask web application for emotion detection using Watson NLP."""
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
+
 from EmotionDetection import emotion_detector
+from EmotionDetection.emotion_detection import EmotionServiceError
 
 app = Flask(__name__)
 
@@ -24,7 +26,10 @@ def emotion_detector_route():
         dict: JSON response containing the formatted emotion analysis or error message.
     """
     text = request.args.get('textToAnalyze')
-    result = emotion_detector(text)
+    try:
+        result = emotion_detector(text)
+    except EmotionServiceError:
+        return jsonify({"response": "Emotion service unavailable. Please try again later."}), 503
 
     # Check for invalid input (dominant_emotion is None)
     if result['dominant_emotion'] is None:
@@ -43,4 +48,4 @@ def emotion_detector_route():
     return jsonify({'response': response_text})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=False)

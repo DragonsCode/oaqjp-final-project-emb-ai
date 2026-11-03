@@ -1,8 +1,12 @@
+import os
 import unittest
+
 from EmotionDetection import emotion_detector
 
+
+@unittest.skipUnless(os.getenv("RUN_WATSON_INTEGRATION") == "1", "External provider: explicitly opt in")
 class TestEmotionDetector(unittest.TestCase):
-    """Unit tests for the emotion_detector function."""
+    """Optional live integration examples; model outputs are provider-dependent."""
 
     def test_joy(self):
         """Test that 'I am glad this happened' returns joy as dominant emotion."""
